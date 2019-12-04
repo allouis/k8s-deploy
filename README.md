@@ -38,7 +38,9 @@ Rollout status is checked for the Kubernetes objects deployed. This is done to i
     imagepullsecrets: |
       image-pull-secret1
       image-pull-secret2
-    manifests: '/manifests/*.*'
+    manifests: |
+      deployment.yaml
+      service.yaml
     strategy: canary
     percentage: 20
 ```
@@ -52,7 +54,9 @@ Inorder to promote or reject your canary deployment use the following:
     imagepullsecrets: |
       image-pull-secret1
       image-pull-secret2
-    manifests: '/manifests/*.*'
+    manifests: |
+      deployment.yaml
+      service.yaml
     strategy: canary
     percentage: 20
     action: promote # set to reject if you want to reject it
@@ -68,7 +72,9 @@ Inorder to promote or reject your canary deployment use the following:
     imagepullsecrets: |
       image-pull-secret1
       image-pull-secret2
-    manifests: '/manifests/*.*'
+    manifests: |
+      deployment.yaml
+      service.yaml
     strategy: canary
     traffic-split-method: smi
     percentage: 20
@@ -85,7 +91,9 @@ Inorder to promote or reject your canary deployment use the following:
     imagepullsecrets: |
       image-pull-secret1
       image-pull-secret2
-    manifests: '/manifests/*.*'
+    manifests: |
+      deployment.yaml
+      service.yaml
     strategy: canary
     traffic-split-method: smi
     percentage: 20
