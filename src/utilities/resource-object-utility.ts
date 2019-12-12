@@ -189,6 +189,57 @@ export function getResources(filePaths: string[], filterResourceTypes: string[])
     return resources;
 }
 
+export function updateImageDetails(inputObject: any, containers: string[]) {
+    if (!inputObject || !inputObject.spec || !containers) {
+        return;
+    }
+
+    if (!!inputObject.spec.template && !!inputObject.spec.template.spec) {
+        if (!!inputObject.spec.template.spec.containers) {
+            updateContainers(inputObject.spec.template.spec.containers, containers);
+        }
+        if (!!inputObject.spec.template.spec.initContainers) {
+            updateContainers(inputObject.spec.template.spec.initContainers, containers);
+        }
+        return;
+    }
+
+    if (!!inputObject.spec.containers) {
+        updateContainers(inputObject.spec.containers, containers);
+    }
+
+    if (!!inputObject.spec.initContainers) {
+        updateContainers(inputObject.spec.initContainers, containers);
+    }
+}
+
+function extractImageName(imageName) {
+    let img = '';
+    if (imageName.indexOf('/') > 0) {
+        const imgParts = imageName.split('/');
+        const registry = imgParts[0];
+        const imgName = imgParts[1].split(':')[0];
+        img = `${registry}/${imgName}`;
+    } else {
+        img = imageName.split(':')[0];
+    }
+    return img;
+}
+
+function updateContainers(containers: any[], images: string[]) {
+    if (!containers || containers.length === 0) {
+        return containers;
+    }
+    containers.forEach((container) => {
+        const imageName: string = extractImageName(container.image.trim());
+        images.forEach(image => {
+            if (extractImageName(image) === imageName) {
+                container.image = image;
+            }
+        });
+    });
+}
+
 function getSpecLabels(inputObject: any) {
 
     if (!inputObject) {
