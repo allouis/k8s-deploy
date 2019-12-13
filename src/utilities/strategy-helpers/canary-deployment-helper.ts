@@ -23,10 +23,10 @@ export const CANARY_LABEL_VALUE = 'canary';
 export const STABLE_SUFFIX = '-stable';
 export const STABLE_LABEL_VALUE = 'stable';
 
-export function deleteCanaryDeployment(kubectl: Kubectl, manifestFilePaths: string[], includeServices: boolean) {
+export async function deleteCanaryDeployment(kubectl: Kubectl, manifestFilePaths: string[], includeServices: boolean) {
 
     // get manifest files
-    const inputManifestFiles: string[] = utils.getManifestFiles(manifestFilePaths);
+    const inputManifestFiles: string[] = await utils.getManifestFiles(manifestFilePaths);
 
     if (inputManifestFiles == null || inputManifestFiles.length == 0) {
         throw new Error('ManifestFileNotFound');

@@ -1,17 +1,44 @@
 'use strict';
 
+import * as fs from 'fs';
+import * as path from 'path';
+import { promisify } from 'util';
 import * as core from '@actions/core';
 import * as kubectlutility from '../kubectl-util';
 import * as io from '@actions/io';
 import { isEqual } from "./utility";
 
-export function getManifestFiles(manifestFilePaths: string[]): string[] {
+const stat = promisify(fs.stat);
+const readdir = promisify(fs.readdir);
+
+export async function getManifestFiles(manifestFilePaths: string[]): Promise<string[]> {
     if (!manifestFilePaths) {
         core.debug('file input is not present');
         return null;
     }
+    const processedManifestFilePaths = [];
 
-    return manifestFilePaths;
+    for (const manifestFilePath of manifestFilePaths) {
+      const pathStat = await stat(manifestFilePath);
+
+      if (pathStat.isDirectory()) {
+        const subPaths = await readdir(manifestFilePath);
+        const fullSubPaths = subPaths.map(subPath => path.join(manifestFilePath, subPath));
+
+        for (const subPath of fullSubPaths) {
+          const subPathStat = await stat(subPath);
+          if (!subPathStat.isDirectory()) {
+            processedManifestFilePaths.push(subPath);
+          }
+        }
+
+      } else {
+        processedManifestFilePaths.push(path);
+      }
+
+    }
+
+    return processedManifestFilePaths;
 }
 
 export async function getKubectl(): Promise<string> {

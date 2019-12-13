@@ -18,9 +18,9 @@ export async function reject(ignoreSslErrors?: boolean) {
     if (canaryDeploymentHelper.isSMICanaryStrategy()) {
         core.debug('Reject deployment with SMI canary strategy');
         includeServices = true;
-        SMICanaryDeploymentHelper.redirectTrafficToStableDeployment(kubectl, TaskInputParameters.manifests);
+        await SMICanaryDeploymentHelper.redirectTrafficToStableDeployment(kubectl, TaskInputParameters.manifests);
     }
 
     core.debug('Deployment strategy selected is Canary. Deleting baseline and canary workloads.');
-    canaryDeploymentHelper.deleteCanaryDeployment(kubectl, TaskInputParameters.manifests, includeServices);
+    await canaryDeploymentHelper.deleteCanaryDeployment(kubectl, TaskInputParameters.manifests, includeServices);
 }
