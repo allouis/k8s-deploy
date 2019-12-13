@@ -23,13 +23,13 @@ export async function promote(ignoreSslErrors?: boolean) {
         // In case of SMI traffic split strategy when deployment is promoted, first we will redirect traffic to
         // Canary deployment, then update stable deployment and then redirect traffic to stable deployment
         core.debug('Redirecting traffic to canary deployment');
-        SMICanaryDeploymentHelper.redirectTrafficToCanaryDeployment(kubectl, TaskInputParameters.manifests);
+        await SMICanaryDeploymentHelper.redirectTrafficToCanaryDeployment(kubectl, TaskInputParameters.manifests);
 
         core.debug('Deploying input manifests with SMI canary strategy');
         await deploymentHelper.deploy(kubectl, TaskInputParameters.manifests, 'None');
 
         core.debug('Redirecting traffic to stable deployment');
-        SMICanaryDeploymentHelper.redirectTrafficToStableDeployment(kubectl, TaskInputParameters.manifests);
+        await SMICanaryDeploymentHelper.redirectTrafficToStableDeployment(kubectl, TaskInputParameters.manifests);
     } else {
         core.debug('Deploying input manifests');
         await deploymentHelper.deploy(kubectl, TaskInputParameters.manifests, 'None');
@@ -37,7 +37,7 @@ export async function promote(ignoreSslErrors?: boolean) {
 
     core.debug('Deployment strategy selected is Canary. Deleting canary and baseline workloads.');
     try {
-        canaryDeploymentHelper.deleteCanaryDeployment(kubectl, TaskInputParameters.manifests, includeServices);
+        await canaryDeploymentHelper.deleteCanaryDeployment(kubectl, TaskInputParameters.manifests, includeServices);
     } catch (ex) {
         core.warning('Exception occurred while deleting canary and baseline workloads. Exception: ' + ex);
     }

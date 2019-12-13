@@ -22,7 +22,7 @@ import { checkForErrors } from "../utility";
 export async function deploy(kubectl: Kubectl, manifestFilePaths: string[], deploymentStrategy: string) {
 
     // get manifest files
-    let inputManifestFiles: string[] = getManifestFiles(manifestFilePaths);
+    let inputManifestFiles: string[] = await getManifestFiles(manifestFilePaths);
 
     // artifact substitution
     inputManifestFiles = updateContainerImagesInManifestFiles(inputManifestFiles, TaskInputParameters.containers);
@@ -44,8 +44,8 @@ export async function deploy(kubectl: Kubectl, manifestFilePaths: string[], depl
     });
 }
 
-function getManifestFiles(manifestFilePaths: string[]): string[] {
-    const files: string[] = utils.getManifestFiles(manifestFilePaths);
+async function getManifestFiles(manifestFilePaths: string[]): Promise<string[]> {
+    const files: string[] = await utils.getManifestFiles(manifestFilePaths);
 
     if (files == null || files.length === 0) {
         throw new Error(`ManifestFileNotFound : ${manifestFilePaths}`);

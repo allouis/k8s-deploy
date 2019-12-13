@@ -123,17 +123,17 @@ function createCanaryService(kubectl: Kubectl, filePaths: string[]) {
     checkForErrors([result]);
 }
 
-export function redirectTrafficToCanaryDeployment(kubectl: Kubectl, manifestFilePaths: string[]) {
-    adjustTraffic(kubectl, manifestFilePaths, 0, 1000);
+export async function redirectTrafficToCanaryDeployment(kubectl: Kubectl, manifestFilePaths: string[]) {
+    await adjustTraffic(kubectl, manifestFilePaths, 0, 1000);
 }
 
-export function redirectTrafficToStableDeployment(kubectl: Kubectl, manifestFilePaths: string[]) {
-    adjustTraffic(kubectl, manifestFilePaths, 1000, 0);
+export async function redirectTrafficToStableDeployment(kubectl: Kubectl, manifestFilePaths: string[]) {
+    await adjustTraffic(kubectl, manifestFilePaths, 1000, 0);
 }
 
-function adjustTraffic(kubectl: Kubectl, manifestFilePaths: string[], stableWeight: number, canaryWeight: number) {
+async function adjustTraffic(kubectl: Kubectl, manifestFilePaths: string[], stableWeight: number, canaryWeight: number) {
     // get manifest files
-    const inputManifestFiles: string[] = utils.getManifestFiles(manifestFilePaths);
+    const inputManifestFiles: string[] = await utils.getManifestFiles(manifestFilePaths);
 
     if (inputManifestFiles == null || inputManifestFiles.length == 0) {
         return;
